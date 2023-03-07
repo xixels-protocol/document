@@ -30,7 +30,7 @@ The Ethereum signer has the following fields:
 
 ## 3.2 Degas Account
 
-A Degas is also a special account, which enables developers to develop one Degas as a user of another Degas and implement certain automated functions. Degas account has no signers.
+A Degas has its own account, which is called Degas Account. Degas Account enables developers to develop one Degas as a user of another Degas and implement certain automated functions. Degas account has no signers.
 
 The fields of an degas account are as follows:
 
