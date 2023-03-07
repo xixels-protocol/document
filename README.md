@@ -1,3 +1,4 @@
 # Xixels Documents
 
-White Paper
+- [White Paper]()
+- [Xixels Consesus Network Protocol]()
