@@ -1,4 +1,4 @@
-## 3 Account
+# 3. Account
 
 An account is a basic object used in Xixels to describe users and their related attributes. Each account has a unique identifier, which is a 16-byte fixed-length binary string. Currently the network node randomly generated an identifier when creating an account.
 
