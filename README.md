@@ -1,4 +1,4 @@
 # Xixels Documents
 
-- [White Paper](whitepaper.md)
+- [Whitepaper](whitepaper.md)
 - [Xixels Consesus Network Protocol](protocol/index.md)
