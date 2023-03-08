@@ -87,7 +87,7 @@ message GatewayMessage {
   oneof payload {
     GatewayErrorMessage error = 0;
     GatewayAuthRequestMessage auth_request = 1;
-    GatewayDegasMessage = 2;
+    GatewayDegasMessage degas = 2;
   }
 }
 ```
