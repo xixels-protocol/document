@@ -1,38 +1,41 @@
 # 5. Message Service
 
-Message Service is a high-performance asynchronous communication service designed specifically for gaming and other scenarios. The server-side and client-side programs of Degas can communicate with each other through the Message Service. 
+Message Service is a high-performance asynchronous communication service designed specifically for gaming and other scenarios. The server-side and the client-side programs of Degas can communicate with each other through the Message Service. 
 
 
 ## 5.1 WebSocket
 
 The Message Service uses WebSocket as the underlying communication protocol, which is a mature communication protocol supported by a large number of network infrastructures and browsers, with strong adaptability. WebSocket is defined in the [RFC 6455 standard](https://www.rfc-editor.org/rfc/rfc6455).
 
-The server and client of the Message Service **MUST** handle the WebSocket Control Frames (Ping, Pong, and Close) correctly according to the protocol specification.
+The server and the client of the Message Service **MUST** handle the WebSocket Control Frames (Ping, Pong, and Close) correctly according to the protocol specification.
 
-The server and client of the Message Service **MUST** only send Binary type WebSocket Data Frames and **MUST NOT** send Text type Data Frames.
+The server and the client of the Message Service **MUST** only send Binary type WebSocket Data Frames and **MUST NOT** send Text type Data Frames.
 
 ## 5.2 Message Gateway
 The Leader Node provides a WebSocket service as the Gateway for the Message Service.
 
-The Gateway authenticates the client and binds the connection to a specific Account.
+the Gateway authenticates the Client and binds the connection to a specific Account.
 
-A Degas Container can run a WebSocket service and communicate with clients. However, messages between the Degas server-side and client-side need to be forwarded through the Gateway.
+A Degas Container can run a WebSocket service and communicate with the Clients. However, messages between the Degas server-side and the Client-side need to be forwarded through the Gateway.
 
 ## 5.3 Frame
 
 This section provides definitions and field meanings for all network data frames used in the Message Service.
 
-The frames are classified into four types based on the sender and receiver of the data:
+There are four main messages based on the sender and receiver of the data:
 
-- From Client to Gateway: [ClientMessage](#532-clientmessage)
-- From Gateway to Client: [GatewayMessage](#533-gatewaymessage)
-- From Gateway to Degas: [GatewayInternalMessage](#534-gatewayinternalmessage)
-- From Degas to Gateway: [DegasMessage](#535-degasmessage)
+- From the Client to the Gateway: [ClientMessage](#532-clientmessage)
+- From the Gateway to the Client: [GatewayMessage](#533-gatewaymessage)
+- From the Gateway to the Degas server-side program: [GatewayInternalMessage](#534-gatewayinternalmessage)
+- From the Degas server-side program to the Gateway: [DegasMessage](#535-degasmessage)
 
+Each of the the main message is assocaited some payload messages. For example, `ClientMessage` has 3 payload messages: `ClientHelloMessage`, `ClientEthAuthMessage` and `ClientDegasMessage`. In the following text, when it refers to sending some payload messages, it means encapsulating the payload message in the corresponding main message and then sending the main message.
 
 ## 5.3.1 Protobuf
 
 The frames transmitted in the Message Service **MUST** be encoded using Protobuf. All the Protobuf message definations **MUST** be written in the "proto3" syntax. 
+
+
 
 ## 5.3.2 ClientMessage
 
@@ -59,7 +62,7 @@ message ClientHelloMessage {
     }
 }
 ```
-When the client connects to the Gateway's WebSocket, it must immediately send a `ClientHelloMessage` to the Gateway. In this message, the client needs to provide its account identifier and the signer information to be used for subsequent authentication.
+When the Client connects to the Gateway's WebSocket, it must immediately send a `ClientHelloMessage` to the Gateway. In this message, the Client needs to provide its account identifier and the signer information to be used for subsequent authentication.
 
 ### 5.3.2.2 EthereumSingerMessage
 ```protobuf
@@ -67,16 +70,22 @@ message EthereumSingerMessage {
     string address = 1;
 }
 ```
-This message is sent when the client chooses to use an Ethereum type signer for authentication. The message contains the Ethereum address of the signer.
+This message is sent when the Client chooses to use an Ethereum type signer for authentication. The message contains the Ethereum address of the signer.
 
-### 5.3.2.3 ClientDegasMessage
+### 5.3.2.3 ClientEthAuthMessage
+```protobuf
+message ClientEthAuthMessage {
+    bytes signature = 1;
+}
+```
+### 5.3.2.4 ClientDegasMessage
 ```protobuf
 message ClientDegasMessage {
   bytes degas_id = 1;
   bytes payload = 2;
 }
 ```
-This message encapsulates the data sent by Client to Degas. The `degas_id` is the 16-byte identifier of the Degas instance that will receive the message. The `payload` field contains the specific data, with a **MAXIMUM** length of 65536 bytes.
+This message encapsulates the data sent by the Client to Degas. The `degas_id` is the 16-byte identifier of the Degas instance that will receive the message. The `payload` field contains the specific data, with a **MAXIMUM** length of 65536 bytes.
 
 ## 5.3.3 GatewayMessage
 
@@ -85,9 +94,9 @@ This message encapsulates the data sent by Client to Degas. The `degas_id` is th
 ```protobuf
 message GatewayMessage {
   oneof payload {
-    GatewayErrorMessage error = 0;
-    GatewayAuthRequestMessage auth_request = 1;
-    GatewayDegasMessage degas = 2;
+    GatewayErrorMessage error = 1;
+    GatewayAuthRequestMessage auth_request = 2;
+    GatewayDegasMessage degas = 3;
   }
 }
 ```
@@ -97,8 +106,11 @@ message GatewayMessage {
 message GatewayErrorMessage {
   enum ERROR_CODE {
     AUTH_FAIL = 0;
+    DUP_SESSION = 1;
+    DEGAS_ERROR = 2;
+    CLIENT_ERROR = 3;
   }
-  ERROR_CODE code = 0;
+  ERROR_CODE code = 1;
 }
 ```
 This message is sent by the Gateway to the Client when an error occurs.
@@ -107,19 +119,27 @@ This message is sent by the Gateway to the Client when an error occurs.
 ```protobuf
 message GatewayAuthRequestMessage {
     oneof request {
-        EthereumAuthMessage ethereum_auth;
+        EthereumAuthRequestMessage ethereum_auth_request;
     }
 }
 ```
-When entering the authentication phase, the Gateway sends this message to the client, requesting the client to perform account authentication according to the specified authentication method.
+When entering the authentication phase, the Gateway sends this message to the Client, requesting the Client to perform account authentication according to the specified authentication method.
 
-### 5.3.3.3 EthereumAuthMessage
+### 5.3.3.3 EthereumAuthRequestMessage
 ```protobuf
-message EthereumAuthMessage {
-    string challenge = 0;
+message EthereumAuthRequestMessage {
+    string challenge = 1;
 }
 ```
-When performing Ethereum authentication, the Gateway generates a random Challenge string and sends it to the client.
+When performing Ethereum authentication, the Gateway generates a random Challenge string and sends it to the Client.
+
+### 5.3.3.4 GatewayDegasMessage
+```protobuf
+message GatewayDegasMessage {
+  bytes degas_id = 1;
+  bytes payload = 2;
+}
+```
 
 ## 5.3.4 GatewayInternalMessage
 `GatewayInternalMessage` is the message sent from the Gateway to the Degas.
@@ -127,16 +147,16 @@ When performing Ethereum authentication, the Gateway generates a random Challeng
 ```protobuf
 message GatewayInternalMessage {
   oneof payload {
-    GatewayForwardMessage client_message = 0;
+    GatewayForwardedMessage forwarded_message = 1;
   }
 }
 ```
 
-### 5.3.4.1 GatewayForwardMessage
+### 5.3.4.1 GatewayForwardedMessage
 ```protobuf
-message GatewayForwardMessage {
-    bytes account_id = 0;
-    bytes payload = 1;
+message GatewayForwardedMessage {
+    bytes account_id = 1;
+    bytes payload = 2;
 }
 ```
 The `payload` field of the [ClientDegasMessage](#5323-clientdegasmessage) is packaged into this message and sent to Degas.
@@ -146,7 +166,7 @@ The `payload` field of the [ClientDegasMessage](#5323-clientdegasmessage) is pac
 ```protobuf
 message DegasMessage {
   oneof payload {
-    DegasToClientMessage degas_to_client = 0;
+    DegasToClientMessage degas_to_client = 1;
   }
 }
 ```
@@ -154,18 +174,77 @@ message DegasMessage {
 ## 5.3.5.1 DegasToClientMessage
 ```protobuf
 message DegasMessage {
-    bytes account_id = 0;
-    bytes payload = 1;
+    bytes account_id = 1;
+    bytes payload = 2;
 }
 ```
 
 ## 5.4 Behavior
 
-### 5.4.1 Authentication
+### 5.4.3 Internal Connection
 
-### 5.4.2 Client Message Forward
+When creating a Degas container, if it provides a message service, it is mandatory to register the service information with the Leader Node. The Gateway of the node always maintains an innternal WebSocket connection to the Degas container.
 
-### 5.4.2 Degas Message Forward
+### 5.4.2 State
+
+There are two states of a WebSocket connection between the Gateway and the Client:
+
+1. AuthState
+Immediately after the WebSocket connection is established, it enters the `AuthState`. In this state, the Gateway attempts to authenticate the Client using the signature of the corresponding account. Once authentication is successful, the connection enters the ForwardState.
+
+2. ForwardState
+In this state, the Gateway forwards messages between the Degas server-side programs and the Client. Message sent to and received from various Degas programs are forwareded through the same WebSocket connection, which is known as multiplexing.
+
+3. AuthErrorState
+If there is any error during the `AuthState`, the Gateway sends a [GatewayErrorMessage](#5331-gatewayerrormessage) with code `AUTH_FAIL` to the Client and close the WebSocket connection.
+
+### 5.4.3 Authentication
+
+Xixels supports multiply cryptographic signatures, and the Gateway uses signature-based authentication.
+
+In the `AuthState`, the authentication process is as follows:
+
+1. The Client send [ClientHelloMessage](#5321-clienthellomessage) to the Gateway. In this message, the Client chooses a signer bound to the account and use this signer to deal with the authenicatoin.
+
+2. The Gateway checks if the signer is a valid signer bound to the account. If the check fails, the Gateway enter the `AuthErrorState`. Otherwise, the Gateway performs the specefic authentication according to the signer's cryptographic method.
+
+3. The Gateway checks if there is any other WebSocket connection in the `ForwardState` associated with the same account. If such a connection exists, the Gateway sends a [GatewayErrorMessage](#5331-gatewayerrormessage) with code `DUP_SESSION` to the old connection and close it.
+
+4. After a successful authentication, the Gateway enters the `ForwardState`. Otherwise, the Gateway enters the `AuthErrorState`.
+
+#### 5.4.3.1 Ethereum Signature Authentication
+
+When the Client uses an Ethereum signer, the Gateway invokes the following "Challenge-Response" authenticatoin process:
+
+1. The Gateway generates a random 16-byte challenge string, encapsulates the string in a [GatewayAuthRequestMessage](#5332-the Gatewayauthrequestmessage), and sends the message to the Client.
+
+2. The Client signs the challenge string with its private key, encapsulates the 65-byte signature in a [ClientEthAuthMessage](#5333-ethereumauthrequestmessage), and sends the message back to the Gateway.
+
+3. The Gateway validates the signature. If the signature is valid, the authenication succeeds. Otherwise, the authenticatoin fails.
+
+### 5.4.4 Client Message Forward
+
+During the `ForwardState`, the Client is permitted to send any arbitrary payload data to the a specified server-side Degas program. The forward process is as follows:
+
+1. The Client encapsulates the payload data in a [ClientDegasMessage](#5324-clientdegasmessage) and sent to the Gateway.
+
+2. The Gateway retrieves the Degas ID and the payload data from the received [ClientDegasMessage](#5324-clientdegasmessage). 
+
+3. If there is no internal WebSocket connection between the Gateway and the corresponding Degas container, the Gateway attempts to establish a connection. If the connection fails due to any reason, the Gateway drops the message and send a [GatewayErrorMessage](#5331-gatewayerrormessage) with code `DEGAS_ERROR` to the Client.
+
+4. The Gateway encapsulates the payload data the Client's account ID in a [GatewayForwardedMessage](#5341-gatewayforwardedmessage) and sends it to the Degas container via the corresponding internal WebSocket connection.
+
+### 5.4.5 Degas Message Forward
+
+The Degas server-side program is permitted to send any arbitrary payload data to a specified Client. The forward process is as follows:
+
+1. The Degas program encapsulates the payload data in a [DegasToClientMessage](#5351-degastoclientmessage) and sent to the Gateway via the internal WebSocket connection.
+
+2. The Gateway retrieves the Account ID and the payload data from the received [DegasToClientMessage](#5351-degastoclientmessage). 
+
+3. The Gateway searchs for an WebSocket connection in the `ForwardState` to the corresponding Client. If there is no such connection, the Gateway drops the message and send a [GatewayErrorMessage](#5331-gatewayerrormessage) with code `CLIENT_ERROR` to the Degas program.
+
+4. The Gateway encapsulates the payload data the Degas ID in a [GatewayDegasMessage](#5334-gatewaydegasmessage) and sends it to the Client via the connection found in the previous step.
 
 
 
