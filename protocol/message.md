@@ -214,13 +214,48 @@ In the `AuthState`, the authentication process is as follows:
 
 #### 5.4.3.1 Ethereum Signature Authentication
 
-When the Client uses an Ethereum signer, the Gateway invokes the following "Challenge-Response" authenticatoin process:
+When the Client uses an Ethereum signer, the Gateway employs a "Challenge-Response" authentication process that consists of the following steps:
 
-1. The Gateway generates a random 16-byte challenge string, encapsulates the string in a [GatewayAuthRequestMessage](#5332-the Gatewayauthrequestmessage), and sends the message to the Client.
+1. The Gateway generates an object with two fields:
+- Message: A human-readable prompt string. For example: "Welcome to Xixels!\nSign this message to sign in. This request will not trigger a blockchain transaction or cost any gas fees."
+- Challenge: A random 16-byte hex string.
 
-2. The Client signs the challenge string with its private key, encapsulates the 65-byte signature in a [ClientEthAuthMessage](#5333-ethereumauthrequestmessage), and sends the message back to the Gateway.
+2. The Gateway encodes the object into a JSON string, encapsulates the string in a [GatewayAuthRequestMessage](#5332-the Gatewayauthrequestmessage), and sends it to the Client.
 
-3. The Gateway validates the signature. If the signature is valid, the authenication succeeds. Otherwise, the authenticatoin fails.
+3. The Client signs the received JSON object using [EIP712](https://eips.ethereum.org/EIPS/eip-712) and follows a predefined parameter template.
+
+```Javascript
+// Parameter Template for signing the JSON object
+{
+    // The fixed domain information
+    domain: {
+      chainId: 1,
+      name: 'Xixels Authentication',
+      version: '1',
+    },
+
+    primaryType: 'Login',
+    types: {
+      EIP712Domain: [
+        { name: 'chainId', type: 'uint256' },
+        { name: 'name', type: 'string' },
+        { name: 'version', type: 'string' },
+      ],
+      // Refer to PrimaryType
+      Login: [
+        { name: 'Message', type: 'string' },
+        { name: 'Challenge', type: 'string' },
+      ],
+    },
+
+    message: ${RECEIVED_JSON_OBJECT}
+}
+
+```
+
+4. The Client encapsulates signature in a [ClientEthAuthMessage](#5333-ethereumauthrequestmessage), and sends the message back to the Gateway.
+
+5. The Gateway validates the signature. If the signature is valid, the authenication succeeds. Otherwise, the authenticatoin fails.
 
 ### 5.4.4 Client Message Forward
 
