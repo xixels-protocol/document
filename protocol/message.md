@@ -31,6 +31,8 @@ There are four main messages based on the sender and receiver of the data:
 
 Each of the the main message is assocaited some payload messages. For example, `ClientMessage` has 3 payload messages: `ClientHelloMessage`, `ClientEthAuthMessage` and `ClientDegasMessage`. In the following text, when it refers to sending some payload messages, it means encapsulating the payload message in the corresponding main message and then sending the main message.
 
+A Degas server-side program MAY function as a client and access the message services provided by the other Degas programs.
+
 ## 5.3.1 Protobuf
 
 The frames transmitted in the Message Service **MUST** be encoded using Protobuf. All the Protobuf message definations **MUST** be written in the "proto3" syntax. 
@@ -58,13 +60,22 @@ message ClientMessage {
 message ClientHelloMessage {
     bytes account_id = 1;
     oneof signer {
+        NetworkAddressSignerMessage network_address_signer = 3;
         EthereumSingerMessage ethereum_signer = 2;
     }
 }
 ```
 When the Client connects to the Gateway's WebSocket, it must immediately send a `ClientHelloMessage` to the Gateway. In this message, the Client needs to provide its account identifier and the signer information to be used for subsequent authentication.
 
-### 5.3.2.2 EthereumSingerMessage
+### 5.3.2.1.2 NetworkAddressSignerMessage
+```protobuf
+message NetworkAddressSignerMessage {
+}
+```
+This message is sent when a Degas container connect to the Gateway. The Client MUST NEVER send this message.
+
+
+### 5.3.2.1.2 EthereumSingerMessage
 ```protobuf
 message EthereumSingerMessage {
     string address = 1;
@@ -212,7 +223,13 @@ In the `AuthState`, the authentication process is as follows:
 
 4. After a successful authentication, the Gateway enters the `ForwardState`. Otherwise, the Gateway enters the `AuthErrorState`.
 
-#### 5.4.3.1 Ethereum Signature Authentication
+#### 5.4.3.1 Internal Network Address Authentication
+
+This authentication method is exclusively intended for authenticating Degas server-side programs and MUST NOT be used by the Client.
+
+When a Degas container connects to the Gateway, the Gateway authenticates the container by its IP address. It compares the container's IP address, obtained from Kubernetes, with the IP address of the WebSocket connection's peer. If they match, the authentication is successful. Otherwise, the authentication fails.
+
+#### 5.4.3.2 Ethereum Signature Authentication
 
 When the Client uses an Ethereum signer, the Gateway employs a "Challenge-Response" authentication process that consists of the following steps:
 

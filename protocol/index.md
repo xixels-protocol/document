@@ -2,11 +2,11 @@
 
 [1. Introducation](intro.md)
 
-[2. Terms](terms.md)
+[2. Degas](runtime.md)
 
 [3. Account](account.md)
 
-[4. Node PRC](rpc.md)
+[4. PRC](rpc.md)
 
 [5. Message Service](message.md)
 

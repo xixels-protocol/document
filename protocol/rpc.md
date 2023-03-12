@@ -1,4 +1,4 @@
-# 4. Node RPC
+# 4. RPC
 
 The Leader Node of Xixels provides RPC services. This set of RPC services mainly includes the following functions:
 - Querying status of the node and Degas
