@@ -14,7 +14,7 @@ In this section, we provide the definitions for all metadata. In the following s
 | Field | Type | Note |
 |:------|:-----|:-----|
 | Account | 16-byte Binary | The unique identitier. Refer to [Account](account.md). |
-| Owner | 16-byte Binary | The owner of the Degas。It **MUST** be an EOA. |
+| Owner | 16-byte Binary | The owner of the Degas. It **MUST** be an EOA. |
 | ServerSideImages | Array of `ServerImage` | A list of server-side images |
 | ServerVersion | Int | The version number of server-side program, which equals the length of `ServerSideImages` minus 1 |
 | ClientSidePrograms | Array of `ClientProgram` | A list of client-side programs|
