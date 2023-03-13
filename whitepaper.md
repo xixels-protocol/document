@@ -1,9 +1,9 @@
 
-**Xixels: A Decentralized Game Infrastructure**
+# Xixels: A Decentralized Game Infrastructure
 
 *Bernard*
 
-**Motivation**
+## Motivation
 
 Over several decades, the gaming industry has achieved remarkable success, profoundly transforming human life. Games have brought people of different ages and backgrounds together, transcending language and cultural barriers. Furthermore, technologies that were originally developed for the gaming industry have found extensive application in fields such as education, healthcare, and beyond. Overall, the gaming industry has revolutionized the way people interact with technology, creating a whole new world of entertainment and innovation.
 
@@ -25,11 +25,11 @@ Developers can easily create and release decentralized games on Xixels for free 
 
 Although Xixels was originally designed to address the pain points and requirements of the gaming industry, we firmly believe that the technology we have been developing has far-reaching applications beyond just gaming. In addition to gaming, our infrastructure can facilitate various applications such as interactive movies and virtual spaces, delivering an exceptional experience to users.
 
-**Architecture**
+## Architecture
 
 ![](whitepaper.001.png)
 
-**Consensus Network**
+### Consensus Network
 
 The Xixels consensus network is a high-performance decentralized distributed network. We can imagine the services provided by the consensus network as a virtual server. Users access this massive virtual server through a client.
 
@@ -59,7 +59,7 @@ The top priority of building the consensus network is to meet the operational re
 
 Blockchain Reader is a set of APIs provided by Xixels to Degas for reading the state of external blockchain. This set of APIs can only read the state of the blockchain and does not have any function to update the blockchain. Blockchain-Reader solves two problems: 1. Through this set of APIs, we can introduce existing assets in the blockchain world into Xixels. For example, the Degas program can easily read a user's NFT assets and display them in its own game. 2. Due to the compromise made by Xixels consensus network on decentralization in favor of performance, critical high-security logic is not suitable for implementation in Xixels consensus network. In this case, developers can implement these logics in an external blockchain network. For example, game developers can write a very simple Ethereum smart contract to accept ETH as a deposit in the game. Xixels' Degas only needs to verify the corresponding Ethereum transaction record through Blockchain Reader APIs to proceed the deposit operation in the game.
 
-**Client**
+### Client
 
 The client is the gateway for users to access the Xixels gaming world. Users explore the Xixels world and use various features and services provided by Degas developers through the client. If we were to make a comparison, the Xixels client is similar to a wallet in existing blockchain networks. However, unlike blockchain networks, Xixels clients are typically fat clients. The Xixels client runs a large amount of Degas code which provides rich local logic and visual experience.
 
@@ -79,7 +79,7 @@ In addition to vision and sounds, Xixels will also continuously expand the user'
 
 In a distributed network, using encryption technology to manage user assets is a mature solution. Similar to a blockchain wallet, the client needs to handle the user's private key carefully to balance security and usability. Xixels uses an account abstraction system and is compatible with various public-private key systems, including Ethereum, as signature providers. This maximizes the use of encrypted wallet signatures to save assets.
 
-**Degas**
+### Degas
 
 Xixels is a completely open and permissionless creation platform for developers to build the Xixels Ecosystem by writing code. The application program running on Xixels is called a Degas, which typically consists of a set of code and a set of resource files. The code is the executable program logic, while the resource files are data files, including models for visual rendering.
 
@@ -97,37 +97,37 @@ The Degas code deployed on the consensus network is similar to the server-side c
 
 By providing powerful and easy-to-use APIs, Xixels provides developers with a simple development environment. Developing on Xixels is as simple as developing in a local environment. Developers do not need to understand complex network mechanisms, but only need to focus on their creativity itself.
 
-**Applications**
+## Applications
 
-**Games**
+### Games
 
 The original intention of Xixels is to provide a friendly decentralized environment for game developers to develop and run their games, and to create a game platform where players have real ownership of their digital assets. Xixels provides open API interfaces for developers to develop and deploy single-player, multiplayer, and MMO games in a decentralized manner. Supported platforms include iOS/Android/Browser/PC. Users can easily access their games and in-game assets across different platforms.
 
 As anyone can resume, fork, or run Xixels from any point in time, this limits the power of developers to arbitrarily modify game content and in-game asset properties. In addition, the traditional game industry practice of voluntarily shutting down a game will no longer exist. As long as there is consensus among the player community, the community can take over the operation of a game and even continue to develop new content for the game.
 
-**Digital Asset Creation Tool**
+### Digital Asset Creation Tool
 
 Developers can use open APIs to develop and deploy their own digital asset creation tools. Creators can also create and publish digital assets based on these tools, and the published digital assets can be permanently stored in Xixels or in decentralized storage systems supported by Xixels, such as IPFS/ARweave. Digital creation tools can be flexibly integrated into other Degass through their composability, which means that different Degass can seamlessly access these digital creation tools within the program. This enables excellent digital creation tools to be widely applied.
 
-**Interactive Movies**
+### Interactive Movies
 
 Creators can quickly create interactive movies with complex branches and logic using open APIs. Due to the composability of the system, creators can use the results or even intermediate processes of existing works as inputs for new works, thereby achieving cross-work plot linkage. Moreover, due to the openness of the system, the community can create derivative works based on existing works to form its own unique plot and ending, thus expanding the content and vitality of interactive movies.
 
-**Real-time Rendering Animation/Interactive Hot Update Animation**
+### Real-time Rendering Animation/Interactive Hot Update Animation
 
 Unlike traditional animation playback, Xixels allows real-time rendering of animation on the client-side. This enables animations to transition from broadcast mode to interactive mode and allows for flexible modification and updating of content after the animation is released. This also allows derivative creators to use existing materials to depict their own envisioned animation scenes.
 
-**Virtual Space**
+### Virtual Space
 
 Developers can create virtual spaces for their own content, companies/entities can customize their virtual office areas, and community users can customize their own exclusive spaces. The composability and openness of Xixels allows for rich possibilities in space display.
 
-**Roadmap**
+## Roadmap
 
 Xixels is a gaming infrastructure. The difficulty in building such infrastructure lies in the following contradiction: when the infrastructure is not mature enough, there are often no ecological applications, which means there are no end-users; and without ecological applications and users, it is impossible to promote the iterative development of the infrastructure. To solve this contradiction, the construction of Xixels will adopt a synchronous development approach of infrastructure and ecological applications. We do not pursue building a perfect infrastructure and then introducing developers to build applications. Instead, we will actively introduce developers at each iterative stage and build the Xixels ecosystem simultaneously. Under this approach, we will simplify the design of the consensus network in the early stage of Xixels, only introducing the most basic open-source and decentralized ideas but providing usable client functions. This enables the Xixels project to deliver an excellent user experience to users early on, which helps to form a virtuous Product-Market-Fit cycle.
 
 We currently divide the project's development into the following three stages:
 
-**Galileo**
+### Galileo
 
 In this stage, our goal is to release a fully functional version of Xixels. Developers can publish Degass on Xixels, and users can access Xixels through the client. All data on Xixels is decentralized, which means the survival and development of Xixels do not depend on any centralized organization. On the other hand, to launch Xixels to developers and users as soon as possible, the project will simplify and compromise in the following areas in this stage:
 
@@ -138,7 +138,7 @@ For the second restriction, only Degass approved by community governance can be 
 
 In this stage, the Xixels community will release at least one client with a complete 3D visual engine. This client can run on smartphones, PCs, and game consoles. After completing this stage, we can provide users with a very excellent user experience, introduce developers to develop truly user-friendly Degas products, and bring real users to Xixels.
 
-**Newton**
+### Newton
 
 In this stage, our main goal is to make it possible to deploy Degass on the mainnet without permission. This will make Xixels a completely creative platform. It is worth noting that although deploying Degass on Xixels will not require permission after this stage is achieved, different client implementations may still selectively run Degas programs based on specific laws or community rules to meet compliance requirements.
 
@@ -148,18 +148,18 @@ The focus of this stage is to introduce a tokenomics model. The model needs to a
 - Incentivizing excellent Degas developers to create great game content.
 - Charging developers or users to pay for the use of Xixels’ resources.
 
-**Einstein**
+### Einstein
 
 In this stage, our goal is to further enhance the decentralization of the consensus network:
 
 1. To eliminate the single point of failure problem of Leader nodes in the network as much as possible, making Xixels more robust.
-1. Enhancing the verifiability of the consensus network, making it relatively easy for the community to verify the network status.
+2. Enhancing the verifiability of the consensus network, making it relatively easy for the community to verify the network status.
 
 The technical challenges in this stage are great. It should be pointed out that the degree of decentralization of the consensus network and the performance of the network are a pair of contradictions that cannot be completely resolved. However, meeting the performance requirements of the Degass is a higher priority. Therefore, in this stage, we can only strive to enhance the decentralization of the network as much as possible, rather than attempting to create a utopian network that is both highly performant and decentralized.
 
 As we are still in the early stage of the project and the entire blockchain technology is still rapidly evolving, we will not make specific technical plans for this stage for now. Instead, we will do detailed planning and design after the start of this stage.
 
-**Community**
+## Community
 
 Xixels is an open and free infrastructure that is entirely driven, developed, and shared by the community. The project's development is collectively completed by developers in the community. In theory, the Xixels community defines the Xixels protocol, including API interface specifications, data transfer specifications, resource data format specifications, and the implementation of this protocol is also completed by the community. We encourage different developers to develop different nodes and clients while adhering to protocol specifications to maximize the richness of the ecosystem and usage scenarios.
 
