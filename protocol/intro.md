@@ -37,11 +37,11 @@ Degas is an application developed by developers deployed on Xixels.
 
 A Degas program usually consists of two parts: server-side program and client-side program.
 
-The server-side program is a Kubernetes image and runs in a Kubernetes container on the Leader Node. The Server-side program can provide JSON RPC and Message Service services, and can also access these services of other Degas. The Leader Node also provides database services for the server-side program.
+The server-side program is a Kubernetes image and runs in a Kubernetes container on the Leader Node. The Server-side program can provide JSON RPC and Message Service services, and can also access the services of other Degas. The Leader Node also provides database services for the server-side program.
 
 The client-side program is a program that runs on the Client. The client-side program is built on the Xixels game engine, and access the RPC and Message services provided by the Server-side program.
 
-For more information about Degas, please refer to [here]().
+For more information about Degas, please refer to [here](/protocol/degas.md).
 
 ## 1.4 Client
 
