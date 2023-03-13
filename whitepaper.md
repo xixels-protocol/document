@@ -27,8 +27,7 @@ Although Xixels was originally designed to address the pain points and requireme
 
 **Architecture**
 
-**…**
-![](Xixels.A.Decentralized.Game.Infrastructure.001.png)
+![](whitepaper.001.png)
 
 **Consensus Network**
 
