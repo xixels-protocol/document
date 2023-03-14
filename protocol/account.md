@@ -3,8 +3,8 @@
 An account is a basic object used in Xixels to describe users and their related attributes. Each account has a unique identifier, which is a 16-byte fixed-length binary string. Currently the network node randomly generated an identifier when creating an account.
 
 Xixels has two types of accounts:
-- Externally owned account (EOA)
-- Degas Account
+- 0: Externally owned account (EOA)
+- 1: Degas Account
 
 ## 2.1 Externally-Owned Account
 An external-owned account is an account associated with an external user.Each external-owned account has a group of signers based on cryptographic signature technology. Xixels supports various signature formats and standards. The public keys or addresses of the signers are recorded in the consensus network nodes. The nodes authenticate messages sent by users by verifying the corresponding signatures.
@@ -13,8 +13,8 @@ The fields of an externally-owned account are as follows:
 
 | Field | Type  | Note   |
 |:------|:------|:-------|
-| Account.Type | Enum | EOA |
-| Account.Identifier| Bytes16 | |
+| Account.Type | Enum | 0 (EOA) |
+| Account.Identifier| 16-byte Binary | |
 | Account.Signers | Array | Signer Information |
 
 Different types of signers correspond to different information.
@@ -26,6 +26,7 @@ The Ethereum signer has the following fields:
 
 | Field | Type  | Note   |
 |:------|:------|:-------|
+| Signer.Type | Enum | 0 (Ethereum signer) |
 | EthereumSigner.Address| Bytes20| Ethereum EOA Address|
 
 ## 2.2 Degas Account
@@ -36,5 +37,5 @@ The fields of an degas account are as follows:
 
 | Field | Type  | Note   |
 |:------|:------|:-------|
-| Account.Type | Enum | Degas Account |
+| Account.Type | Enum | 1 (Degas Account) |
 | Account.Identifier| Bytes16 | |

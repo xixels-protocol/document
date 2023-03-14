@@ -6,8 +6,8 @@
 
 [3. Degas](Degas.md)
 
-[4. PRC](rpc.md)
+[4. RPC](rpc.md)
 
 [5. Message Service](message.md)
 
-[6. Node Synchronization](sync.md)
+[6. Synchronization](sync.md)

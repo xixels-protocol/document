@@ -20,9 +20,19 @@ In this section, we provide the definitions for all metadata. In the following s
 | ClientSidePrograms | Array of `ClientProgram` | A list of client-side programs|
 | ClientVersion | Int | The version number of client-side program, which equals the length of `ClientSidePrograms` minus 1 |
 | ServerUpgradable | Boolean | When it is false, the server-side image cannot be upgraded anymore. |
-| ServerCores | Int | The number of CPU cores required to run the server-side image. |
+| Server | Int | The number of CPU cores required to run the server-side image. |
 | ServerMemory | Int | The amount of memory, in bytes, required to run the server-side image. |
-| ServerStatus | Int | Status code of the server-side porgram. |
+| ServerStatus | Enum | Status code of the server-side porgram. |
+
+`ServerStatus` has the following potential values
+| Value | Note |
+|:------|:-----|
+| 0     | The server is running. |
+| 1     | The server is restarting. |
+| 2     | The server is stopped. |
+| 3     | The server is terminated by Leader Node. |
+| 4     | The server is banned by Xixels DAO. |
+
 
 `ServerImage` has the following fields：
 | Field | Type | Note |
@@ -60,12 +70,16 @@ Before deploying Degas on Xixels, developers must publish the Image on Trusted E
 
 The size limit for each image is 1GB. This restriction MAY be changed by community governance.
 
-Developers have the option to specify the required number of CPU cores and memory to run the server-side program. If the computing resources on the Leader Node do not meet these requirements, the container will not run. In cases where developers do not specify the requirements, the default values will be 1 core and 2GB of memory.
+Developers have the option to specify the required number of CPU cores and memory to run the server-side program. If the computing resources on the Leader Node do not meet these requirements, the container will not run. In cases where developers do not specify the requirements, the default values will be 1 core and 4GB of memory.
 
 The network communication of server-side programs is strictly limited, and only the following network behaviors are allowed by the Network Policy of Leader Node:
 1. Only the Gateway can access the Pod's RPC and message Service. This means that clients can only access the server-side program's RPC and message service via the Gateway.
 2. The Pod can only access the Gateway's RPC and Message Service. This means that server-side programs can only access other Degas' RPC and message service as a client through the Gateway. Server-side programs cannot actively access any other network resources.
 3. The Pod can access to the database service provided by Xixels.
+
+The server-side program MAY run a JSON-RPC service that is bound to the TCP port specified by `RPCPort`. The Gateway redirects RPC requests to this port. For more information about the RPC service, refer to [here](rpc.md) .
+
+The server-side program MAY run a message service that is bound to the TCP port specified by `MessagePort`. The Gateway redirects messages to this port. For more information about the message service, refer to [here](message.md) 
 
 Developers have the ability to upgrade their server-side images by submitting new ServerImage data to the Xixels Leader Node. Once the Leader Node receives the new version of the image, it stops the container's operation and switches to the new version. After the upgrade, `ServerVersion` is incremented by 1 automatically. The upgrade feature is irreversible, and all historical versions of the image information are stored in `ServerSideImages`. The last element of `ServerSideImages` is the active image. Additionally, developers have the option to disable the upgrade feature by setting `ServerUpgradable` to False.
 
