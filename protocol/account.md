@@ -17,9 +17,9 @@ The fields of an externally-owned account are as follows:
 | Account.Identifier| 16-byte Binary | |
 | Account.Signers | Array | Signer Information |
 
-Different types of signers correspond to different information.
+The struct of the signer information veries based on the type of the signer.
 
-### 2.1.1 Ethereum Signer
+### 2.1.1 Ethereum Signer Information
 The Ethereum signer is compatible with the [Ethereum external address](https://ethereum.org/en/developers/docs/accounts/) stander.
 
 The Ethereum signer has the following fields:
@@ -27,6 +27,8 @@ The Ethereum signer has the following fields:
 | Field | Type  | Note   |
 |:------|:------|:-------|
 | Signer.Type | Enum | 0 (Ethereum signer) |
+| Signer.Nonce | Int | A number used once when signing. It begins at zero and automatically increments following each signing event.| 
+| Signer.Disabled | Boolean | Whether the signer is disabled. |
 | EthereumSigner.Address| Bytes20| Ethereum EOA Address|
 
 ## 2.2 Degas Account

@@ -79,9 +79,10 @@ This message is sent when a Degas container connect to the Gateway. The Client M
 ```protobuf
 message EthereumSingerMessage {
     string address = 1;
+    bytes siganture = 2;
 }
 ```
-This message is sent when the Client chooses to use an Ethereum type signer for authentication. The message contains the Ethereum address of the signer.
+This message is sent when the Client chooses to use an Ethereum type signer for authentication. 
 
 ### 5.3.2.3 ClientEthAuthMessage
 ```protobuf
@@ -106,8 +107,7 @@ This message encapsulates the data sent by the Client to Degas. The `degas_id` i
 message GatewayMessage {
   oneof payload {
     GatewayErrorMessage error = 1;
-    GatewayAuthRequestMessage auth_request = 2;
-    GatewayDegasMessage degas = 3;
+    GatewayDegasMessage degas = 2;
   }
 }
 ```
@@ -125,24 +125,6 @@ message GatewayErrorMessage {
 }
 ```
 This message is sent by the Gateway to the Client when an error occurs.
-
-### 5.3.3.2 GatewayAuthRequestMessage
-```protobuf
-message GatewayAuthRequestMessage {
-    oneof request {
-        EthereumAuthRequestMessage ethereum_auth_request;
-    }
-}
-```
-When entering the authentication phase, the Gateway sends this message to the Client, requesting the Client to perform account authentication according to the specified authentication method.
-
-### 5.3.3.3 EthereumAuthRequestMessage
-```protobuf
-message EthereumAuthRequestMessage {
-    string challenge = 1;
-}
-```
-When performing Ethereum authentication, the Gateway generates a random Challenge string and sends it to the Client.
 
 ### 5.3.3.4 GatewayDegasMessage
 ```protobuf
@@ -215,7 +197,7 @@ Xixels supports multiply cryptographic signatures, and the Gateway uses signatur
 
 In the `AuthState`, the authentication process is as follows:
 
-1. The Client send [ClientHelloMessage](#5321-clienthellomessage) to the Gateway. In this message, the Client chooses a signer bound to the account and use this signer to deal with the authenicatoin.
+1. The Client send [ClientHelloMessage](#5321-clienthellomessage) to the Gateway. In this message, the Client chooses a signer bound to the account and use this signer to sign a message to authenticate itself.
 
 2. The Gateway checks if the signer is a valid signer bound to the account. If the check fails, the Gateway enter the `AuthErrorState`. Otherwise, the Gateway performs the specefic authentication according to the signer's cryptographic method.
 
@@ -231,13 +213,11 @@ When a Degas container connects to the Gateway, the Gateway authenticates the co
 
 #### 5.4.3.2 Ethereum Signature Authentication
 
-When the Client uses an Ethereum signer, the Gateway employs a "Challenge-Response" authentication process that consists of the following steps:
+When the Client uses an Ethereum signer, the authentication process consists of the following steps:
 
-1. The Gateway generates an object with two fields:
-- Message: A human-readable prompt string. For example: "Welcome to Xixels!\nSign this message to sign in. This request will not trigger a blockchain transaction or cost any gas fees."
-- Challenge: A random 16-byte hex string.
-
-2. The Gateway encodes the object into a JSON string, encapsulates the string in a [GatewayAuthRequestMessage](#5332-the Gatewayauthrequestmessage), and sends it to the Client.
+1. The Client generates JSON an object with two fields:
+- Message: A predefined human-readable prompt string. "Welcome to Xixels!\nSign this message to sign in. This request will not trigger a blockchain transaction or cost any gas fees."
+- Nonce: The nonce of the signer in the metadata.
 
 3. The Client signs the received JSON object using [EIP712](https://eips.ethereum.org/EIPS/eip-712) and follows a predefined parameter template.
 
@@ -261,18 +241,20 @@ When the Client uses an Ethereum signer, the Gateway employs a "Challenge-Respon
       // Refer to PrimaryType
       Login: [
         { name: 'Message', type: 'string' },
-        { name: 'Challenge', type: 'string' },
+        { name: 'Nonce', type: 'Int' },
       ],
     },
 
-    message: ${RECEIVED_JSON_OBJECT}
+    message: ${JSON_OBJECT_TO_SIGN}
 }
 
 ```
-
-4. The Client encapsulates signature in a [ClientEthAuthMessage](#5333-ethereumauthrequestmessage), and sends the message back to the Gateway.
+4. The Client encapsulates signature in the [EthereumSingerMessage](#53212-ethereumsingermessage), and sends the message to the Gateway.
 
 5. The Gateway validates the signature. If the signature is valid, the authenication succeeds. Otherwise, the authenticatoin fails.
+
+6. If the authenticatoin is successful, the nonce of the signer is increased by 1.
+
 
 ### 5.4.4 Client Message Forward
 
