@@ -85,7 +85,6 @@ The procedure of verification the signature.
 
 5. If the verificaiton is successful, the nonce of the signer is increased by 1.
 
-
 ## 4.4 Account Maintenance
 
 There are a set of RPCs for account maintenance. 
@@ -104,6 +103,7 @@ This RPC returns the metadata of the account defined in [2.1 Externally-Owned Ac
 ### 4.4.2 CreateAccount
 
 **Parameters**
+
 - `signer` JSON object. The signer who signs the request. The struct of this JSON object depends on the type of the signer.
   - `ethereumSignerAddress` 24-byte binary. If using Ethereum signer, pass the signer's address.
 - `signers` Array of JSON object. The initial signers of this account. 
@@ -116,16 +116,19 @@ This RPC create a new external-owned account. The caller must provide at least a
 
 ### 4.4.3 AddSigner
 
-** Parameters**
+**Parameters**
+
 - `account` 16-byte binary. The ID of the account to which the signer is added.
 - `newSigner` JSON object. The signer to add. The struct of this JSON object depends on the type of the signer. Check [here](#43-rpc-request-signature) for the details of the struct.
 - `signer` JSON object. The signer who signs the request. 
 - `signature` binary. The signature of the request signed by the account.
 
 **Returns**
+
 None
 
 **Note**
+
 This RPC appends a new signer to the specified account. The request must be signed by one of the existing signers. 
 
 If the signer already exists but is disabled, executing this RPC will enable the signer again.
@@ -140,9 +143,11 @@ If the signer already exists but is disabled, executing this RPC will enable the
 - `signature` binary. The signature of the request signed by the account.
 
 **Returns**
+
 None
 
 **Note**
+
 This RPC disables a specific signer associated with the given account. However, at least one signer must remain enabled for the account. If the target signer to disable is the enabled signer, this RPC call will fail.
 
 ## 4.5 Degas Maintenance
