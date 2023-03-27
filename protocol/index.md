@@ -4,7 +4,7 @@
 
 [2. Account](account.md)
 
-[3. Degas](Degas.md)
+[3. Degas](degas.md)
 
 [4. RPC](rpc.md)
 
