@@ -97,7 +97,11 @@ There are a set of RPCs for account maintenance.
 
 **Returns**
 
-This RPC returns the metadata of the account defined in [2.1 Externally-Owned Account](/protocol/account.md#21-externally-owned-account).
+This RPC returns the metadata of the account defined in [2.1 Externally-Owned Account](./account.md#21-externally-owned-account).
+
+**Note**
+
+It is a read-only RPC. 
 
 
 ### 4.4.2 CreateAccount
@@ -109,9 +113,11 @@ This RPC returns the metadata of the account defined in [2.1 Externally-Owned Ac
 - `signers` Array of JSON object. The initial signers of this account. 
 
 **Returns**
+
 - `account` 16-byte binary. The ID of the newly created account.
 
 **Note**
+
 This RPC create a new external-owned account. The caller must provide at least a signer to create this account.
 
 ### 4.4.3 AddSigner
@@ -135,7 +141,7 @@ If the signer already exists but is disabled, executing this RPC will enable the
 
 ### 4.4.4 DisableSigner
 
-** Parameters**
+**Parameters**
 
 - `account` 16-byte binary. The ID of the account to which the signer is added.
 - `signerToDisable` JSON object. The signer to add. The struct of this JSON object depends on the type of the signer. Check [here](#43-rpc-request-signature) for the details of the struct.
@@ -153,10 +159,107 @@ This RPC disables a specific signer associated with the given account. However, 
 ## 4.5 Degas Maintenance
 
 ### 4.5.1 GetDegas
+
+**Parameters**
+
+- `degas` 16-byte binary string. The account ID of the Degas to be called.
+
+**Returns**
+
+This RPC returns all the meta-data defined in [3.1 Metadata](./degas.md#31-metadata)
+
+**Note**
+
+This is a read-only RPC.
+
 ### 4.5.2 CreateDegas
+
+**Paramters**
+- `serverImage` JSON-object, which is defined in [3.1 Metadata](./degas.md#31-metadata). This is a optional parameter. If the Degas has no server-side program, set paramter to null.
+- `clientProgram` JSON-object, which is defined in [3.1 Metadata](./degas.md#31-metadata). This is a optional parameter. If the Degas has no client-side program, set paramter to null.
+- `serverUpgradable` Boolean. True when the server-side program can be upgraded.
+- `serverCores` Int. The number of CPU cores to run the server-side program required by the owner.
+- `serverMemory` Int. The memory in bytes to run the server-side program required by the owner.
+- `account`  16-byte binary. The account ID of the user that signs the request. This account is the default owner of the Degas to create.
+- `signer` JSON object. The signer who signs the request. The structure of this object varies based on the specified signer type.
+- `signature` binary. The signature of the request signed by the account.
+
+**Ruturns**
+
+When success, the RPC returns the account ID of the newly created Degas.
+
+**Note**
+
+A Degas MUST has at least a server-side program or a client-side program.
+The server-side program MAY be un-upgradable. In this case, the owner cannot upgrade the server-side program anymore. But,the owner can alway upgrade the client-side program.
+
 ### 4.5.3 SetDegasOwner
+
+**Paramters**
+
+- `degas` The account ID of the degas.
+- `newOwner` The account ID of the new owner. When set null, it means there will be no owner of this Degas.
+- `account` 16-byte binary. The account ID of the user that signs the request. This must be the old owner.
+- `signer` JSON object. The signer who signs the request. The structure of this object varies based on the specified signer type.
+- `signature` binary. The signature of the request signed by the account.
+
+**Returns**
+
+None
+
+**Note**
+
+This RPC set a new owner of an existed Degas.
+
 ### 4.5.4 UpgradeDegas
-### 4.5.5 UpdateDegasResource
+
+**Paramters**
+- `degas` The account ID of the degas to upgrade.
+- `serverImage` JSON-object, which is defined in [3.1 Metadata](./degas.md#31-metadata). This is a optional parameter. When upgrading the server-side program, set this parameter.
+- `clientProgram` JSON-object, which is defined in [3.1 Metadata](./degas.md#31-metadata). This is a optional parameter.  When upgrading the client-side program, set this parameter.
+- `account`  16-byte binary. The account ID of the user that signs the request. This account must be the owner of the Degas to create.
+- `signer` JSON object. The signer who signs the request. The structure of this object varies based on the specified signer type.
+- `signature` binary. The signature of the request signed by the account.
+
+**Ruturns**
+
+None
+
+**Note**
+
+This RPC add a new `serverImage` or `clientProgram` to the meta-data of the Degas. If the old server-side program is running, this RPC will terminate the old image and run the latest one.
+
+### 4.5.5 DisableServerUpgrade
+**Paramters**
+- `degas` The account ID of the degas.
+- `account`  16-byte binary. The account ID of the user that signs the request. This account is the default owner of the Degas to create.
+- `signer` JSON object. The signer who signs the request. The structure of this object varies based on the specified signer type.
+- `signature` binary. The signature of the request signed by the account.
+
+**Ruturns**
+
+None
+
+**None**
+
+This RPC disable a Degas to upgrade server-side program anymore. 
+
+
+### 4.5.6 SetDegasContainerResource
+
+**Paramters**
+
+- `degas` The account ID of the degas.
+- `serverCores` Int. The number of CPU cores to run the server-side program required by the owner.
+- `serverMemory` Int. The memory in bytes to run the server-side program required by the owner.
+- `account`  16-byte binary. The account ID of the user that signs the request. This account is the default owner of the Degas to create.
+- `signer` JSON object. The signer who signs the request. The structure of this object varies based on the specified signer type.
+- `signature` binary. The signature of the request signed by the account.
+
+**Ruturns**
+
+None
+
 
 
 ## 4.5 Degas RPC
@@ -176,7 +279,10 @@ To make a Degas RPC call, the client uses the `CallDegas` PRC method of the Lead
 - `signature` Optional. The signature of the request signed by the account.
 
 **Retuns**
-When success, the 
+
+When success, the RPC returns the data from the Degas RPC.
+
+**Note**
 
 The Degas server-side progrma MAY requrie the user to sign the requrest when calling the RPC. It is particularly used when the RPC updates the state of the server-side program. By verifing the signature, the RPC can authenticate the user's account. Besides, only requests with signatures are stored and synchonized among the Xixels network. If the Degas server-side program wants futher proof of the correctness of the RPC call, it SHOULD require the signature.
 
@@ -185,9 +291,6 @@ However, a read-only Degas RPC, which dose not update the state of the server-si
 When the Gateway receives a request, it verifies the signature. If the verification is successful, the Gateway copies the `Account` field into the `Parameters` and calls the corresponding Degas' RPC method using the newly generated paramters.
 
 The response JSON object returned from the Degas RPC is packed into the `data` object with a filed name `degasRepsonse` in the Gateway's RPC response.
-
-## 4.6 Exteranl Blockchain Reader
-
 
 
 

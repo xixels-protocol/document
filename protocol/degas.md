@@ -13,18 +13,18 @@ In this section, we provide the definitions for all metadata. In the following s
 
 | Field | Type | Note |
 |:------|:-----|:-----|
-| Account | 16-byte Binary | The unique identitier. Refer to [Account](account.md). |
-| Owner | 16-byte Binary | The owner of the Degas. It **MUST** be an EOA. |
-| ServerSideImages | Array of `ServerImage` | A list of server-side images |
-| ServerVersion | Int | The version number of server-side program, which equals the length of `ServerSideImages` minus 1 |
-| ClientSidePrograms | Array of `ClientProgram` | A list of client-side programs|
-| ClientVersion | Int | The version number of client-side program, which equals the length of `ClientSidePrograms` minus 1 |
-| ServerUpgradable | Boolean | When it is false, the server-side image cannot be upgraded anymore. |
-| Server | Int | The number of CPU cores required to run the server-side image. |
-| ServerMemory | Int | The amount of memory, in bytes, required to run the server-side image. |
-| ServerStatus | Enum | Status code of the server-side porgram. |
+| account | 16-byte Binary | The unique identitier. Refer to [Account](account.md). |
+| owner | 16-byte Binary | The owner of the Degas. It **MUST** be an EOA. |
+| serverSideImages | Array of `serverImage` | A list of server-side images |
+| serverVersion | Int | The version number of server-side program, which equals the length of `serverSideImages` minus 1 |
+| clientSidePrograms | Array of `clientProgram` | A list of client-side programs|
+| clientVersion | Int | The version number of client-side program, which equals the length of `clientSidePrograms` minus 1 |
+| serverUpgradable | Boolean | When it is false, the server-side image cannot be upgraded anymore. |
+| serverCores | Int | The number of CPU cores required to run the server-side image. |
+| serverMemory | Int | The amount of memory, in bytes, required to run the server-side image. |
+| serverStatus | Enum | Status code of the server-side porgram. |
 
-`ServerStatus` has the following potential values
+`serverStatus` has the following potential values
 | Value | Note |
 |:------|:-----|
 | 0     | The server is running. |
@@ -34,28 +34,28 @@ In this section, we provide the definitions for all metadata. In the following s
 | 4     | The server is banned by Xixels DAO. |
 
 
-`ServerImage` has the following fields：
+`serverImage` has the following fields：
 | Field | Type | Note |
 |:------|:-----|:-----|
-| URL | String | The URL of the image. |
-| Hash | 32-byte Binary | Sha256 of this image. |
-| EntryPoint | String | The initial script in the image. |
-| RPCPort | Int | The port of the RPC provided by this image. Negative value means there is no RPC service. |
-| MessagePort | Int | The port of the message service provided by this image. Negative value means there is no message service. |
-| AddTime | Unix Timestamp | The time of adding this image to the Degas. Updated by Leader Node.  |
+| url | String | The URL of the image. |
+| hash | 32-byte Binary | Sha256 of this image. |
+| entryPoint | String | The initial script in the image. |
+| rpcPort | Int | The port of the RPC provided by this image. Negative value means there is no RPC service. |
+| messagePort | Int | The port of the message service provided by this image. Negative value means there is no message service. |
+| addTime | Unix Timestamp | The time of adding this image to the Degas. Updated by Leader Node.  |
 
 `ClientProgram` has the following fields：
 | Field | Type | Note |
 |:------|:-----|:-----|
-| Files | Array of the ClientFile | A list of the client-side file  |
-| EntryPoint | String | File name of the intial script |
+| files | Array of the ClientFile | A list of the client-side file  |
+| entryPoint | String | File name of the intial script |
 
 `ClientFile` has the following fields
 | Field | Type | Note |
 |:------|:-----|:-----|
-| URL | String | The URL of the file  |
-| Hash | 32-byte Binary | The Sha256 of the file |
-| Unzip | Boolean | When it is true, the client should unzip the file before run the program |
+| url | String | The URL of the file  |
+| hash | 32-byte Binary | The Sha256 of the file |
+| unzip | Boolean | When it is true, the client should unzip the file before run the program |
 
 
 **Trusted External Storage**
